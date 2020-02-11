@@ -19,6 +19,10 @@ yarn
 ```sh
 yarn start
 ```
+verifyingWebhook.js can be used to verify both trello webhook and slack webhook
+```sh
+node verifyingWebhook.js
+```
 
 ## Author
 
