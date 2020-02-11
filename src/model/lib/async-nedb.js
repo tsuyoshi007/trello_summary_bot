@@ -1,9 +1,9 @@
 var Datastore = require("nedb");
-var db = new Datastore({ filename: "./test.db", autoload: true });
+var db = new Datastore({ filename: "./src/model/test.db", autoload: true });
 
 /**
  * return promise of nedb findOne
- * @param {JSON} query
+ * @param {Object} query
  */
 const find = query => {
   return new Promise((resolve, reject) => {
@@ -18,7 +18,7 @@ const find = query => {
 
 /**
  * return promise of nedb findOne
- * @param {JSON} query
+ * @param {Object} query
  */
 const findOne = query => {
   return new Promise((resolve, reject) => {
@@ -33,7 +33,7 @@ const findOne = query => {
 
 /**
  * return promise of nedb insert
- * @param {JSON} query
+ * @param {Object} query
  */
 const insert = query => {
   return new Promise((resolve, reject) => {
@@ -48,8 +48,8 @@ const insert = query => {
 
 /**
  * return promise of nedb update
- * @param {JSON} query
- * @param {JSON} update
+ * @param {Object} query
+ * @param {Object} update
  */
 const update = (query, update) => {
   return new Promise((resolve, reject) => {
@@ -62,6 +62,11 @@ const update = (query, update) => {
   });
 };
 
+/**
+ *
+ * @param {Object} query
+ * @param {Object} options
+ */
 const remove = (query, options) => {
   return new Promise((resolve, reject) => {
     db.remove(query, options, function(err, numDoc) {

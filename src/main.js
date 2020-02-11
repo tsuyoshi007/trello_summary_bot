@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 
 // @slack/web-api
-const { sendMessage } = require("./view/slackWeb");
+const { sendMessage, report } = require("./view/slackWeb");
 const User = require("./model/User");
 
 (async () => {
@@ -44,22 +44,34 @@ const User = require("./model/User");
 
   app.post("/slack", function(req, res) {
     const eventType = req.body.event.type;
+
     if (eventType !== "message") {
       return;
     }
+
     const text = req.body.event.text;
 
-    const CRON_COMMAND_REGEX = /^trello_daily_summary cron .{1,2}.{1,2}.{1,2}.{1,2}.{1,2}$/;
-    const CHANNEL_COMMAND_REGEX = /^trello_daily_summary ch \w{1,50}$/;
+    const eventTs = req.body.event.event_ts;
+    const eventDate = new Date(1000 * parseInt(eventTs));
+    if (new Date() - eventDate > 3000) {
+      return;
+    }
+
+    const CRON_COMMAND_REGEX = /^!trello_daily_summary cron (\*|((\*\/)?[1-5]?[0-9])) (\*|((\*\/)?[1-5]?[0-9])) (\*|((\*\/)?(1?[0-9]|2[0-3]))) (\*|((\*\/)?([1-9]|[12][0-9]|3[0-1]))) (\*|((\*\/)?([1-9]|1[0-2]))) (\*|((\*\/)?[0-6]))$/;
+    const CHANNEL_COMMAND_REGEX = /^!trello_daily_summary ch \w{1,50}$/;
 
     if (text.match(CRON_COMMAND_REGEX)) {
-      CRON_TIME = text.substring(29, text.length);
+      CRON_TIME = text.replace(/!trello_daily_summary cron /, "");
       updateCronJob();
+      sendMessage(SLACK_CHANNEL, "Cron Time Changed");
     } else if (text.match(CHANNEL_COMMAND_REGEX)) {
-      SLACK_CHANNEL = text.substring(27, text.length);
+      SLACK_CHANNEL = text.replace(/!trello_daily_summary ch /, "");
+      sendMessage(SLACK_CHANNEL, "Slack Channel Changed");
     }
   });
-
+  /**
+   * this function will update crontime
+   */
   const updateCronJob = () => {
     if (cronJob) {
       cronJob.stop();
@@ -68,18 +80,13 @@ const User = require("./model/User");
       CRON_TIME,
       async function() {
         const users = await User.getAllTrelloUserInDB();
-        sendMessage(SLACK_CHANNEL, users);
+        report(SLACK_CHANNEL, users);
       },
       null,
       true
     );
     cronJob.start();
   };
-
-  setTimeout(async () => {
-    const users = await User.getAllTrelloUserInDB();
-    sendMessage(SLACK_CHANNEL, users);
-  }, 20000);
 
   app.listen(PORT);
 })();

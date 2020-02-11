@@ -1,23 +1,29 @@
 const db = require("./lib/async-nedb");
 
-const Trello = require("trello");
-const trello = new Trello(
-  "511464d8cb06ea21b4187dfbb67c8645",
-  "227dab961b5149ee1c7914bcbbf0fd2c871cfac096f75c3c70a75d00a57366f5"
-);
-const trelloDoingList = "doing";
+const TRELLO_API_KEY = process.env.TRELLO_API_KEY;
+const TRELLO_TOKEN = process.env.TRELLO_TOKEN;
+const TRELLO_BOARD_ID = process.env.TRELLO_BOARD_ID;
+const TRELLO_DOING_LIST = process.env.TRELLO_DOING_LIST;
+const Trello = require("./lib/trello");
+const trello = new Trello(TRELLO_API_KEY, TRELLO_TOKEN);
 
+/**
+ * this function will initialize db with all member in trello board and card in doing list
+ */
 async function initializeDB() {
   await clearDB();
   const users = await getAllTrelloUser();
   return Promise.resolve(await db.insert(users));
 }
 
+/**
+ * this function will get all member in trello board and card in doing list
+ */
 async function getAllTrelloUser() {
-  const boardMember = await trello.getBoardMembers("5cfb64c3db32c86781e20c7c");
-  const lists = await trello.getListsOnBoard("5cfb64c3db32c86781e20c7c");
+  const boardMember = await trello.getBoardMembers(TRELLO_BOARD_ID);
+  const lists = await trello.getListsOnBoard(TRELLO_BOARD_ID);
   const doingList = lists.filter(list => {
-    return list.name === trelloDoingList;
+    return list.name === TRELLO_DOING_LIST;
   })[0];
 
   const users = await Promise.all(
@@ -41,13 +47,21 @@ async function getAllTrelloUser() {
   return Promise.resolve(users);
 }
 
+/**
+ * this function will get all document in db
+ */
 function getAllTrelloUserInDB() {
   return getUser();
 }
 
+/**
+ *
+ * @param {Object} card
+ * @param {Number} timestamp
+ */
 async function startWorking(card, timestamp) {
   const members = await trello.getMemberInCard(card.id);
-  for (let member of members) {
+  for (const member of members) {
     const memberInDB = await getUser(member.id);
     if (memberInDB.card === 0) {
       db.update(
@@ -78,9 +92,14 @@ async function startWorking(card, timestamp) {
   }
 }
 
+/**
+ *
+ * @param {Object} card
+ * @param {Object} timestamp
+ */
 async function stopWorking(card, timestamp) {
   const members = await trello.getMemberInCard(card.id);
-  for (let member of members) {
+  for (const member of members) {
     const memberInDB = await getUser(member.id);
     if (memberInDB.card === 1) {
       db.update(
@@ -107,17 +126,20 @@ async function stopWorking(card, timestamp) {
   }
 }
 
+/**
+ *
+ * @param {String} userId
+ */
 async function getUser(userId) {
   if (userId === undefined) return db.find({});
   return db.findOne({ userId: userId });
 }
 
+/**
+ * this function will clear all document in db
+ */
 async function clearDB() {
-  db.remove({}, { multi: true }, function(err) {
-    if (err) {
-      console.log(err);
-    }
-  });
+  return db.remove({}, { multi: true });
 }
 
 module.exports = {
