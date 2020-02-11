@@ -1,0 +1,12 @@
+node_modules
+yarn-error.log
+yarn.lock
+ngrok.exe
+trello.txt
+slack.txt
+ngrok
+card
+test.db
+test.js
+trello1.txt
+.env
