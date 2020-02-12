@@ -14,7 +14,7 @@
 -   [remove][10]
     -   [Parameters][11]
 -   [initializeDB][12]
--   [getAllTrelloUser][13]
+-   [getAllTrelloData][13]
 -   [getAllTrelloUserInDB][14]
 -   [startWorking][15]
     -   [Parameters][16]
@@ -76,9 +76,9 @@ return promise of nedb update
 
 this function will initialize db with all member in trello board and card in doing list
 
-## getAllTrelloUser
+## getAllTrelloData
 
-this function will get all member in trello board and card in doing list
+this function will get all member in trello board and doing list
 
 ## getAllTrelloUserInDB
 
@@ -151,7 +151,7 @@ This function will create a block message and send to slack (Username,Card Url,W
 
 [12]: #initializedb
 
-[13]: #getalltrellouser
+[13]: #getalltrellodata
 
 [14]: #getalltrellouserindb
 

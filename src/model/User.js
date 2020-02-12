@@ -12,14 +12,19 @@ const trello = new Trello(TRELLO_API_KEY, TRELLO_TOKEN);
  */
 async function initializeDB() {
   await clearDB();
-  const users = await getAllTrelloUser();
-  return Promise.resolve(await db.insert(users));
+  const trelloData = await getAllTrelloData();
+  const users = trelloData.users;
+  const doingListId = trelloData.doingListId;
+  return Promise.resolve({
+    users: await db.insert(users),
+    doingListId: doingListId
+  });
 }
 
 /**
- * this function will get all member in trello board and card in doing list
+ * this function will get all member in trello board and doing list
  */
-async function getAllTrelloUser() {
+async function getAllTrelloData() {
   const boardMember = await trello.getBoardMembers(TRELLO_BOARD_ID);
   const lists = await trello.getListsOnBoard(TRELLO_BOARD_ID);
   const doingList = lists.filter(list => {
@@ -44,7 +49,7 @@ async function getAllTrelloUser() {
       };
     })
   );
-  return Promise.resolve(users);
+  return Promise.resolve({ users: users, doingListId: doingList.id });
 }
 
 /**
@@ -145,7 +150,6 @@ async function clearDB() {
 module.exports = {
   startWorking: startWorking,
   stopWorking: stopWorking,
-  getAllTrelloUser: getAllTrelloUser,
   clearDB: clearDB,
   initializeDB: initializeDB,
   getAllTrelloUserInDB: getAllTrelloUserInDB

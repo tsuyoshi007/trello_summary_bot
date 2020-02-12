@@ -16,7 +16,7 @@ const { sendMessage, report } = require("./view/slackWeb");
 const User = require("./model/User");
 
 (async () => {
-  await User.initializeDB();
+  const doingListId = (await User.initializeDB()).doingListId;
 
   app.post("/trello", async function(req, res) {
     const actiontype = req.body.action.display.translationKey;
@@ -35,9 +35,9 @@ const User = require("./model/User");
 
     const card = req.body.action.data.card;
 
-    if (listAfter === "5e1ed4e595c7f20af82e1ff7") {
+    if (listAfter === doingListId) {
       User.startWorking(card, actionDate);
-    } else if (listBefore === "5e1ed4e595c7f20af82e1ff7") {
+    } else if (listBefore === doingListId) {
       User.stopWorking(card, actionDate);
     }
   });
