@@ -9,6 +9,7 @@ const trello = new Trello(TRELLO_API_KEY, TRELLO_TOKEN);
 
 /**
  * this function will initialize db with all member in trello board and card in doing list
+ * @returns {Object} {users,doingListId}
  */
 async function initializeDB() {
   await clearDB();
@@ -23,6 +24,7 @@ async function initializeDB() {
 
 /**
  * this function will get all member in trello board and doing list
+ * @returns {Object} {users,doingListId}
  */
 async function getAllTrelloData() {
   const boardMember = await trello.getBoardMembers(TRELLO_BOARD_ID);
@@ -54,6 +56,7 @@ async function getAllTrelloData() {
 
 /**
  * this function will get all document in db
+ * @returns {Array} [{userId,username,timestamp,workingTime,card,cardUrl}...]
  */
 function getAllTrelloUserInDB() {
   return getUser();
@@ -134,6 +137,7 @@ async function stopWorking(card, timestamp) {
 /**
  *
  * @param {String} userId
+ * @returns if userId === undefined return Array of User else return User
  */
 async function getUser(userId) {
   if (userId === undefined) return db.find({});

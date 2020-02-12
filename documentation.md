@@ -76,20 +76,26 @@ return promise of nedb update
 
 this function will initialize db with all member in trello board and card in doing list
 
+Returns **[Object][26]** {users,doingListId}
+
 ## getAllTrelloData
 
 this function will get all member in trello board and doing list
 
+Returns **[Object][26]** {users,doingListId}
+
 ## getAllTrelloUserInDB
 
 this function will get all document in db
+
+Returns **[Array][27]** [{userId,username,timestamp,workingTime,card,cardUrl}...]
 
 ## startWorking
 
 ### Parameters
 
 -   `card` **[Object][26]** 
--   `timestamp` **[Number][27]** 
+-   `timestamp` **[Number][28]** 
 
 ## stopWorking
 
@@ -102,7 +108,9 @@ this function will get all document in db
 
 ### Parameters
 
--   `userId` **[String][28]** 
+-   `userId` **[String][29]** 
+
+Returns **any** if userId === undefined return Array of User else return User
 
 ## clearDB
 
@@ -114,8 +122,8 @@ this function will send message to slack (use this when you want to send text)
 
 ### Parameters
 
--   `channelId` **[String][28]** 
--   `msg` **[String][28]** 
+-   `channelId` **[String][29]** 
+-   `msg` **[String][29]** 
 
 ## report
 
@@ -123,9 +131,9 @@ This function will create a block message and send to slack (Username,Card Url,W
 
 ### Parameters
 
--   `channelId` **[String][28]** 
+-   `channelId` **[String][29]** 
 -   `users`  
--   `msg` **[String][28]** 
+-   `msg` **[String][29]** 
 
 [1]: #updatecronjob
 
@@ -179,6 +187,8 @@ This function will create a block message and send to slack (Username,Card Url,W
 
 [26]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
-[27]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[27]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[28]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[28]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+
+[29]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
